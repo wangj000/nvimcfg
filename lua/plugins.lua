@@ -294,6 +294,7 @@ require("lazy").setup({
     },
   },
 
+  -- Statusline
   {
     "nvim-lualine/lualine.nvim",
     dependencies = { "nvim-tree/nvim-web-devicons" },
@@ -358,4 +359,5 @@ require("lazy").setup({
       },
     },
   },
+
 })
