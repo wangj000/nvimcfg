@@ -47,3 +47,7 @@ end, { desc = "Help tags" })
 vim.keymap.set("n", "<leader>p", function()
 	require("conform").format({ async = true })
 end, { desc = "Format with Prettier" })
+
+-- TSTools Mappings
+vim.keymap.set("n", "<leader>rf", "<cmd>TSToolsFileReferences<cr>", { desc = "Check all import references" })
+vim.keymap.set("n", "<leader>rn", "<cmd>TSToolsRenameFile<cr>", { desc = "Rename files" })
