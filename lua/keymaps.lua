@@ -27,7 +27,7 @@ vim.keymap.set("n", ">", ">>", { noremap = true })
 
 -- Show Diagnostic
 vim.keymap.set("n", "<leader>d", vim.diagnostic.open_float, {
-	desc = "Show diagnostics at cursor",
+	desc = "[S]how [D]iagnostic",
 })
 ------------ Plugin Mappings ------------
 
@@ -68,8 +68,13 @@ vim.keymap.set("n", "<leader>fw", function()
 end, { desc = "[F]ind [W]ord" })
 
 vim.keymap.set("n", "gd", fzf.lsp_definitions, { desc = "[G]oto [D]efinition" })
-vim.keymap.set("n", "K", vim.lsp.buf.hover, { desc = "LSP Hover Documentation" })
+vim.keymap.set("n", "K", vim.lsp.buf.hover, { desc = "Goto Implementation" })
 
 -- TSTools
 vim.keymap.set("n", "<leader>rf", "<cmd>TSToolsFileReferences<cr>", { desc = "[R]e-[f]erences" })
 vim.keymap.set("n", "<leader>rn", "<cmd>TSToolsRenameFile<cr>", { desc = "[R]e-[n]ame" })
+
+-- Flash
+vim.keymap.set({ "n", "x", "o" }, "fj", function()
+	require("flash").jump()
+end, { desc = "[F]lash [J]ump" })
