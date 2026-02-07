@@ -67,18 +67,15 @@ vim.keymap.set("n", "t;", function()
 	harpoon:list():select(5)
 end)
 
--- Fzf Lua
-local fzf = require("fzf-lua")
+-- Telescope
+vim.keymap.set("n", "<leader>pf", require("telescope.builtin").find_files, { -- Find files
+	desc = "[F]ind [F]iles",
+})
 
-vim.keymap.set("n", "<leader>pf", function()
-	fzf.files({
-		fd_opts = "--type f --exclude node_modules",
-	})
-end, { desc = "[P]review [F]iles" })
+vim.keymap.set("n", "<leader>pw", require("telescope.builtin").live_grep, { -- Search for words
+	desc = "[F]ind [W]ord",
+})
 
-vim.keymap.set("n", "<leader>pw", function()
-	fzf.live_grep_native({ cmd = "rg --color=always --smart-case -g '!{.git,node_modules}/'" })
-end, { desc = "[P]review [W]ord" })
-
-vim.keymap.set("n", "gd", fzf.lsp_definitions, { desc = "[G]oto [D]efinition" })
-vim.keymap.set("n", "K", vim.lsp.buf.hover, { desc = "Goto Implementation" })
+vim.keymap.set("n", "<leader>gd", require("telescope.builtin").lsp_type_definitions, {
+	desc = "[G]o [D]efintiion",
+})

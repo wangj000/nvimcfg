@@ -112,7 +112,7 @@ require("lazy").setup({
 		end,
 	},
 
-	-- Buffer oil tree
+	-- Oil
 	{
 		"stevearc/oil.nvim",
 		---@module 'oil'
@@ -165,42 +165,121 @@ require("lazy").setup({
 		end,
 	},
 
-	-- Save files to a buffer storage to jump to
+	-- Harpoon
 	{
 		"ThePrimeagen/harpoon",
 		branch = "harpoon2",
 		dependencies = { "nvim-lua/plenary.nvim" },
 	},
 
-	-- Fuzzy finder (fzf lua)
+	-- Telescope
 	{
-		"ibhagwan/fzf-lua",
-		dependencies = { "nvim-tree/nvim-web-devicons" },
-		config = function()
-			local fzf = require("fzf-lua")
-			fzf.setup({ { "fzf-vim", "max-perf", "hide" } })
+		"nvim-telescope/telescope.nvim",
+		dependencies = {
+			"nvim-lua/plenary.nvim",
+			"nvim-telescope/telescope-ui-select.nvim",
+			"LinArcX/telescope-env.nvim",
+		},
+		opts = function(_, opts)
+			local themes = require("telescope.themes")
+
+			opts.defaults = vim.tbl_deep_extend("force", opts.defaults or {}, {
+
+				file_ignore_patterns = {
+					"%.git/",
+					"node_modules/",
+					"%.lock",
+					"%.cache/",
+				},
+
+				prompt_prefix = "   ",
+				selection_caret = "  ",
+				entry_prefix = "  ",
+
+				sorting_strategy = "ascending",
+				layout_strategy = "horizontal",
+
+				layout_config = {
+					prompt_position = "top",
+					width = 0.9,
+					height = 0.85,
+					preview_cutoff = 40,
+				},
+
+				preview = {
+					treesitter = true,
+				},
+
+				winblend = 0,
+				color_devicons = true,
+				path_display = { "smart" },
+
+				border = true,
+				borderchars = {
+					"─",
+					"│",
+					"─",
+					"│",
+					"╭",
+					"╮",
+					"╯",
+					"╰",
+				},
+
+				mappings = {
+					i = {
+						["<C-j>"] = "move_selection_next",
+						["<C-k>"] = "move_selection_previous",
+						["<C-q>"] = "send_to_qflist",
+						["<Esc>"] = "close",
+					},
+					n = {
+						["q"] = "close",
+					},
+				},
+			})
+
+			opts.pickers = vim.tbl_deep_extend("force", opts.pickers or {}, {
+				find_files = {
+					hidden = true,
+				},
+				buffers = {
+					sort_lastused = true,
+					previewer = false,
+				},
+				live_grep = {
+					only_sort_text = true,
+				},
+				diagnostics = {
+					theme = "ivy",
+				},
+			})
+
+			opts.extensions = vim.tbl_deep_extend("force", opts.extensions or {}, {
+				["ui-select"] = themes.get_dropdown({
+					previewer = false,
+					winblend = 0,
+					borderchars = {
+						"─",
+						"│",
+						"─",
+						"│",
+						"╭",
+						"╮",
+						"╯",
+						"╰",
+					},
+				}),
+				env = {},
+			})
+		end,
+		config = function(_, opts)
+			local telescope = require("telescope")
+			telescope.setup(opts)
+			telescope.load_extension("ui-select")
+			telescope.load_extension("env")
 		end,
 	},
-
-	-- Color Theme
-	-- {
-	-- 	"Mofiqul/vscode.nvim",
-	-- 	lazy = false,
-	-- 	priority = 1000,
-	-- 	config = function()
-	-- 		local c = require("vscode.colors").get_colors()
-	--
-	-- 		require("vscode").setup({
-	-- 			italic_comments = false,
-	-- 			disable_nvim_tree_bg = true,
-	-- 			color_overrides = {
-	-- 				vscBack = "#000000",
-	-- 			},
-	-- 		})
-	--
-	-- 		require("vscode").load()
-	-- 	end,
-	-- },
 
 	-- Auto Format
 	{
@@ -324,6 +403,105 @@ require("lazy").setup({
 		config = function()
 			require("mini.surround").setup()
 			require("mini.pairs").setup()
+		end,
+	},
+
+	-- Color Scheme
+	{
+		"vague-theme/vague.nvim",
+		lazy = false, -- make sure we load this during startup if it is your main colorscheme
+		priority = 1000, -- make sure to load this before all the other plugins
+		config = function()
+			-- NOTE: you do not need to call setup if you don't want to.
+			require("vague").setup({
+				transparent = false, -- don't set background
+				-- disable bold/italic globally in `style`
+				bold = true,
+				italic = true,
+				style = {
+					-- "none" is the same thing as default. But "italic" and "bold" are also valid options
+					boolean = "bold",
+					number = "none",
+					float = "none",
+					error = "bold",
+					comments = "italic",
+					conditionals = "none",
+					functions = "none",
+					headings = "bold",
+					operators = "none",
+					strings = "italic",
+					variables = "none",
+
+					-- keywords
+					keywords = "none",
+					keyword_return = "italic",
+					keywords_loop = "none",
+					keywords_label = "none",
+					keywords_exception = "none",
+
+					-- builtin
+					builtin_constants = "bold",
+					builtin_functions = "none",
+					builtin_types = "bold",
+					builtin_variables = "none",
+				},
+				-- plugin styles where applicable
+				-- make an issue/pr if you'd like to see more styling options!
+				plugins = {
+					cmp = {
+						match = "bold",
+						match_fuzzy = "bold",
+					},
+					dashboard = {
+						footer = "italic",
+					},
+					lsp = {
+						diagnostic_error = "bold",
+						diagnostic_hint = "none",
+						diagnostic_info = "italic",
+						diagnostic_ok = "none",
+						diagnostic_warn = "bold",
+					},
+					neotest = {
+						focused = "bold",
+						adapter_name = "bold",
+					},
+					telescope = {
+						match = "bold",
+					},
+				},
+
+				-- Override highlights or add new highlights
+				on_highlights = function(highlights, colors) end,
+
+				-- Override colors
+				colors = {
+					bg = "#141415",
+					inactiveBg = "#1c1c24",
+					fg = "#cdcdcd",
+					floatBorder = "#878787",
+					line = "#252530",
+					comment = "#606079",
+					builtin = "#b4d4cf",
+					func = "#c48282",
+					string = "#e8b589",
+					number = "#e0a363",
+					property = "#c3c3d5",
+					constant = "#aeaed1",
+					parameter = "#bb9dbd",
+					visual = "#333738",
+					error = "#d8647e",
+					warning = "#f3be7c",
+					hint = "#7e98e8",
+					operator = "#90a0b5",
+					keyword = "#6e94b2",
+					type = "#9bb4bc",
+					search = "#405065",
+					plus = "#7fa563",
+					delta = "#f3be7c",
+				},
+			})
+			vim.cmd("colorscheme vague")
 		end,
 	},
 })
